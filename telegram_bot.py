@@ -1,17 +1,24 @@
-import requests
 import os
+import requests
 
-def send_telegram(message: str):
+def send_message(text):
     token = os.getenv("TELEGRAM_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+    if not token or not chat_id:
+        print("Missing Telegram credentials")
+        return
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
 
     payload = {
         "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML"
+        "text": text
     }
 
-    r = requests.post(url, data=payload)
-    return r.json()
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status()
+        print("Telegram message sent.")
+    except Exception as e:
+        print(f"Telegram error: {e}")
