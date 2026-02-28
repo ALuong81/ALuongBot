@@ -39,8 +39,8 @@ def main():
     if portfolio:
         message += "\n💰 DANH MỤC MINI FUND\n"
         for p in portfolio:
-            message += f"{p['symbol']} | {p['shares']} cp | {round(p['value'],0)} VND\n"
-    
+            ticker = p.get("ticker") or p.get("symbol")
+            message += f"{ticker} | {p['shares']} cp | {round(p['value'],0)} VND\n"
     print(message)
     send_message(message)
 
@@ -48,5 +48,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
