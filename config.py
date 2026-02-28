@@ -60,10 +60,6 @@ TCBS_BASE_URL = "https://apipubaws.tcbs.com.vn/stock-insight/v1/stock/bars"
 
 LOG_LEVEL = "INFO"
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -75,4 +71,5 @@ DATA_START = os.getenv("DATA_START", "2018-01-01")
 NAV_FILE = "nav.csv"
 
 REGIME_FILE = "regime_history.csv"
+
 
