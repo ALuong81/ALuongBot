@@ -1,19 +1,12 @@
-from config import TARGET_VOL, TOP_N_BULL, TOP_N_BEAR
+import pandas as pd
+import numpy as np
 
-def build_portfolio(scores, regime):
+def calculate_signal(df):
+    df["MA20"] = df["close"].rolling(20).mean()
+    df["MA50"] = df["close"].rolling(50).mean()
 
-    sorted_items = sorted(scores.items(), key=lambda x: x[1]["score"], reverse=True)
+    latest = df.iloc[-1]
 
-    top_n = TOP_N_BULL if regime=="BULL" else TOP_N_BEAR
-    selected = sorted_items[:top_n]
-
-    portfolio = []
-    for sym, data in selected:
-        vol = data["vol"]
-        weight = TARGET_VOL / (vol + 1e-6)
-        portfolio.append((sym, data["score"], weight))
-
-    total_weight = sum([x[2] for x in portfolio])
-    portfolio = [(s, sc, w/total_weight) for s, sc, w in portfolio]
-
-    return portfolio
+    if latest["close"] > latest["MA20"] > latest["MA50"]:
+        return True
+    return False
