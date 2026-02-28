@@ -27,7 +27,9 @@ def main():
 
         except Exception as e:
             print(f"Lỗi {symbol}: {e}")
-
+            
+    print(results)
+    
     passed = [r for r in results if r["passed"]]
     portfolio = build_portfolio(passed)    
 
@@ -52,6 +54,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
