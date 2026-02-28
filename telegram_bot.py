@@ -1,15 +1,17 @@
 import requests
-import time
-from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+import os
 
-def send_message(text):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text}
+def send_telegram(message: str):
+    token = os.getenv("TELEGRAM_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
-    for _ in range(3):
-        try:
-            r = requests.post(url, data=payload, timeout=10)
-            if r.status_code == 200:
-                return
-        except:
-            time.sleep(2)
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "HTML"
+    }
+
+    r = requests.post(url, data=payload)
+    return r.json()
