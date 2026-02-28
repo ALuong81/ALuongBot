@@ -9,13 +9,14 @@ def build_portfolio(results, capital=100000000):
     portfolio = []
 
     for stock in selected:
-        shares = int(weight / stock["price"])
+    price_vnd = stock["price"] * 1000
+    shares = int(weight / price_vnd)
 
-        portfolio.append({
+portfolio.append({
             "symbol": stock["symbol"],
             "price": stock["price"],
             "shares": shares,
-            "value": shares * stock["price"]
+            "value": shares * price_vnd
         })
 
     return portfolio
