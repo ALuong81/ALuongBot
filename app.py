@@ -46,11 +46,12 @@ def main():
 
         message += "\n💰 DANH MỤC MINI FUND\n"
         for p in portfolio:
-            message += f"{p['ticker']} | {p['shares']} cp | {round(p['value'],0f)} VND\n"
+            message += f"{p['ticker']} | {p['shares']} cp | {round(p['value'],0)} VND\n"
 
     send_message(message)
     print(message)
 
 if __name__ == "__main__":
     main()
+
 
