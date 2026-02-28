@@ -1,4 +1,4 @@
-from data.tcbs_client import get_price
+from data.vnstock_client import get_price
 from core.strategy import filter_stock
 from core.portfolio import build_portfolio
 from infra.telegram_bot import send_message
@@ -47,3 +47,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
