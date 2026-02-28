@@ -1,43 +1,37 @@
 from data import get_universe, get_price
-from factors import compute_score
-from regime import detect_regime
-from portfolio import build_portfolio
-from telegram_bot import send_message
-from storage import save_nav, save_regime
-from logger import get_logger
+from strategy import calculate_signal
+from portfolio import allocate
+from telegram_bot import send_telegram
+import logging
 
-logger = get_logger()
+logging.basicConfig(level=logging.INFO)
 
 def main():
+    logging.info("Fetching data...")
 
     universe = get_universe()
-    scores = {}
-
-    logger.info("Fetching data...")
+    signals = {}
 
     for symbol in universe:
-        df = get_price(symbol)
-        if df is None or len(df)<200:
-            continue
+        try:
+            df = get_price(symbol)
+            if calculate_signal(df):
+                signals[symbol] = True
+        except Exception as e:
+            logging.warning(f"{symbol} error: {e}")
 
-        score, vol = compute_score(df)
-        scores[symbol] = {"score": score, "vol": vol}
+    portfolio = allocate(signals)
 
-    index_df = get_price("VNINDEX", is_index=True)
-    regime = detect_regime(index_df)
+    message = "<b>📊 STOCK BOT DAILY REPORT</b>\n\n"
 
-    portfolio = build_portfolio(scores, regime)
+    if not portfolio:
+        message += "Không có cổ phiếu đạt điều kiện."
+    else:
+        for s, money in portfolio.items():
+            message += f"{s} - Phân bổ: {money:,.0f} VND\n"
 
-    nav = 1.0  # demo NAV cố định, có thể tính real sau
-    save_nav(nav)
-    save_regime(regime)
-
-    message = f"VN MINI FUND\nRegime: {regime}\n\n"
-    for sym, sc, w in portfolio:
-        message += f"{sym} | Score {round(sc,3)} | Weight {round(w,2)}\n"
-
-    send_message(message)
-    logger.info("Done.")
+    send_telegram(message)
+    logging.info("Done.")
 
 if __name__ == "__main__":
     main()
