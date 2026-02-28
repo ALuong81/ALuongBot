@@ -1,22 +1,40 @@
 import pandas as pd
+from data import get_price
 
-def filter_stocks(df):
-    if df is None or len(df) < 50:
-        return False
+def calculate_rs(stock_df, index_df):
+    if len(stock_df) < 60 or len(index_df) < 60:
+        return 0
 
-    df = df.copy()
+    stock_return = stock_df["close"].iloc[-1] / stock_df["close"].iloc[-60]
+    index_return = index_df["close"].iloc[-1] / index_df["close"].iloc[-60]
 
-    # Tính MA20
-    df["ma20"] = df["close"].rolling(20).mean()
+    if index_return == 0:
+        return 0
 
-    # Điều kiện:
-    # 1. Giá hiện tại > MA20
-    # 2. Volume hôm nay > volume trung bình 20 phiên
+    return stock_return / index_return
+
+
+def filter_stocks(symbol, stock_df, index_df):
+    if stock_df is None or len(stock_df) < 200:
+        return False, 0
+
+    df = stock_df.copy()
+
+    df["ma50"] = df["close"].rolling(50).mean()
+    df["ma200"] = df["close"].rolling(200).mean()
+    df["vol_avg20"] = df["volume"].rolling(20).mean()
+    df["high60"] = df["high"].rolling(60).max()
 
     latest = df.iloc[-1]
-    avg_volume = df["volume"].rolling(20).mean().iloc[-1]
 
-    cond1 = latest["close"] > latest["ma20"]
-    cond2 = latest["volume"] > avg_volume
+    cond_trend = latest["close"] > latest["ma50"] and latest["ma50"] > latest["ma200"]
+    cond_breakout = latest["close"] >= latest["high60"]
+    cond_volume = latest["volume"] > 1.5 * latest["vol_avg20"]
 
-    return cond1 and cond2
+    rs = calculate_rs(stock_df, index_df)
+    cond_rs = rs > 1.1
+
+    if cond_trend and cond_breakout and cond_volume and cond_rs:
+        return True, round(rs, 2)
+
+    return False, round(rs, 2)
