@@ -13,11 +13,13 @@ def main():
     selected = []
 
     # Lấy dữ liệu VNINDEX để tính RS
-    index_df = get_price("VNINDEX")
+    index_df = get_price("VNINDEX", is_index=True)
 
     if index_df is None:
-        send_message("Không lấy được dữ liệu VNINDEX.")
-        return
+        print("Không lấy được VNINDEX, bỏ qua RS")
+        use_rs = False
+    else:
+        use_rs = True
 
     for symbol in universe:
         stock_df = get_price(symbol)
@@ -61,3 +63,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
