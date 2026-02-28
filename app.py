@@ -5,26 +5,59 @@ from telegram_bot import send_message
 
 logging.basicConfig(level=logging.INFO)
 
+
 def main():
     logging.info("Fetching data...")
 
     universe = get_universe()
     selected = []
 
+    # Lấy dữ liệu VNINDEX để tính RS
+    index_df = get_price("VNINDEX")
+
+    if index_df is None:
+        send_message("Không lấy được dữ liệu VNINDEX.")
+        return
+
     for symbol in universe:
-        df = get_price(symbol)
-        if df is None:
+        stock_df = get_price(symbol)
+
+        if stock_df is None or len(stock_df) < 200:
             continue
 
-        if filter_stocks(df):
-            selected.append(symbol)
+        passed, rs = filter_stocks(symbol, stock_df, index_df)
 
-    message = "KẾT QUẢ LỌC CỔ PHIẾU:\n"
-    message += "\n".join(selected) if selected else "Không có cổ phiếu đạt điều kiện."
+        if passed:
+            current_price = round(stock_df["close"].iloc[-1], 2)
+
+            # % thay đổi hôm nay
+            if len(stock_df) > 1:
+                change_pct = round(
+                    (stock_df["close"].iloc[-1] /
+                     stock_df["close"].iloc[-2] - 1) * 100,
+                    2
+                )
+            else:
+                change_pct = 0
+
+            selected.append(
+                f"{symbol} | {current_price} | {change_pct}% | RS: {rs}"
+            )
+
+    # Sắp xếp theo RS giảm dần
+    selected.sort(key=lambda x: float(x.split("RS: ")[1]), reverse=True)
+
+    if selected:
+        message = "🔥 KẾT QUẢ LỌC CỔ PHIẾU\n\n"
+        for stock in selected:
+            message += stock + "\n"
+    else:
+        message = "⚠️ Không có cổ phiếu đạt điều kiện hôm nay."
 
     send_message(message)
 
     logging.info("Done.")
+
 
 if __name__ == "__main__":
     main()
