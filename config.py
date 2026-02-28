@@ -58,7 +58,8 @@ TCBS_BASE_URL = "https://apipubaws.tcbs.com.vn/stock-insight/v1/stock/bars"
 # 6. LOGGING
 # ==============================
 
-LOG_LEVEL = "INFO"import os
+LOG_LEVEL = "INFO"
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -74,3 +75,4 @@ DATA_START = os.getenv("DATA_START", "2018-01-01")
 NAV_FILE = "nav.csv"
 
 REGIME_FILE = "regime_history.csv"
+
