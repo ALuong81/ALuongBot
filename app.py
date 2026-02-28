@@ -30,7 +30,7 @@ def main():
             
     print(results)
     
-    passed = [r for r in results if r.get("pass") == "True"]
+    passed = [r for r in results if r.get("pass")]
     portfolio = build_portfolio(passed)    
 
     message = "📊 KẾT QUẢ LỌC CỔ PHIẾU\n\n"
@@ -54,6 +54,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
