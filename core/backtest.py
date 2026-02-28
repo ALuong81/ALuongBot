@@ -1,14 +1,41 @@
 import pandas as pd
+from datetime import datetime, timedelta
+from core.strategy import filter_stock
+from core.portfolio import build_portfolio
+from core.regime import market_regime
+from data.vnstock_client import get_price
 
-def backtest(df):
-    df["ma20"] = df["close"].rolling(20).mean()
-    df["ma50"] = df["close"].rolling(50).mean()
+def run_backtest(symbols, start_date, end_date, capital=100_000_000):
+    dates = pd.date_range(start_date, end_date, freq="M")
+    nav = capital
+    nav_history = []
 
-    df["signal"] = (df["close"] > df["ma20"]) & (df["ma20"] > df["ma50"])
-    df["return"] = df["close"].pct_change()
+    for date in dates:
+        results = []
 
-    df["strategy_return"] = df["return"] * df["signal"].shift(1)
+        for symbol in symbols:
+            df = get_price(symbol, start=start_date, end=date.strftime("%Y-%m-%d"))
+            if df is None or len(df) < 50:
+                continue
 
-    total_return = (1 + df["strategy_return"].fillna(0)).cumprod().iloc[-1] - 1
+            passed = filter_stock(df)
+            price = df["close"].iloc[-1]
 
-    return round(total_return * 100, 2)
+            results.append({
+                "symbol": symbol,
+                "pass": passed,
+                "price": float(price)
+            })
+
+        regime = market_regime()
+
+        portfolio = build_portfolio(results, capital=nav, regime=regime)
+
+        nav = sum(p["value"] for p in portfolio)
+
+        nav_history.append({
+            "date": date,
+            "nav": nav
+        })
+
+    return pd.DataFrame(nav_history)
