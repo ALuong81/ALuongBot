@@ -1,8 +1,2 @@
 pandas
-numpy
 requests
-scikit-learn
-vnstock
-python-dotenv
-pytz
-matplotlib
