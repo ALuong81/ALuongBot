@@ -18,8 +18,9 @@ def get_price(symbol):
 
 
 def get_universe():
-    hose = ["SSI", "FPT", "HPG", "MWG", "VCB"]
-    hnx = ["PVS", "SHS"]
-    upcom = ["ACV", "BSR"]
+    hose = ["SSI", "FPT", "HPG", "MWG", "VCB", "BSR"]
+    hnx = ["PVS", "SHS", "VGS"]
+    upcom = ["ACV", "OIL"]
 
     return hose + hnx + upcom
+
