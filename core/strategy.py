@@ -1,15 +1,9 @@
-from core.factors import add_indicators
+def filter_stock(df):
+    if df is None or len(df) < 60:
+        return False
 
-def filter_stock(symbol, df):
-    df = add_indicators(df)
+    ma20 = df["close"].rolling(20).mean().iloc[-1]
+    ma50 = df["close"].rolling(50).mean().iloc[-1]
+    price = df["close"].iloc[-1]
 
-    latest = df.iloc[-1]
-
-    cond1 = latest["close"] > latest["MA20"]
-    cond2 = latest["MA20"] > latest["MA50"]
-    cond3 = latest["MA50"] > latest["MA200"]
-
-    if cond1 and cond2 and cond3:
-        return True, latest["close"]
-
-    return False, latest["close"]
+    return price > ma20 and ma20 > ma50
