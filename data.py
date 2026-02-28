@@ -1,15 +1,25 @@
-from vnstock import Vnstock
+from vnstock import Quote
 import pandas as pd
 
-def get_universe():
-    # 3 sàn
-    return [
-        "VCB","BID","CTG","HPG","FPT","MWG","VNM",
-        "SSI","VND","GAS","PLX","PVD","HSG",
-        "REE","PNJ","DXG","NLG","KDH"
-    ]
-
 def get_price(symbol):
-    stock = Vnstock().stock(symbol=symbol, source="VCI")
-    df = stock.quote.history(start="2023-01-01", interval="1D")
-    return df
+    try:
+        q = Quote(symbol=symbol, source="VCI")
+        df = q.history(interval="1D")
+
+        if df is None or df.empty:
+            return None
+
+        df.columns = [c.lower() for c in df.columns]
+        return df
+
+    except Exception as e:
+        print(f"Lỗi lấy dữ liệu {symbol}: {e}")
+        return None
+
+
+def get_universe():
+    hose = ["SSI", "FPT", "HPG", "MWG", "VCB"]
+    hnx = ["PVS", "SHS"]
+    upcom = ["ACV", "BSR"]
+
+    return hose + hnx + upcom
