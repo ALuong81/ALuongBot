@@ -28,7 +28,8 @@ def main():
         except Exception as e:
             print(f"Lỗi {symbol}: {e}")
 
-    portfolio = build_portfolio(results)
+    passed = [r for r in results if r["passed"]]
+    portfolio = build_portfolio(passed)    
 
     message = "📊 KẾT QUẢ LỌC CỔ PHIẾU\n\n"
 
@@ -51,6 +52,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
