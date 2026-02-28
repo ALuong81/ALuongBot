@@ -1,7 +1,7 @@
 import os
 import requests
 
-def send_message(text):
+def send_message(message):
     token = os.getenv("TELEGRAM_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -22,3 +22,4 @@ def send_message(text):
         print("Telegram message sent.")
     except Exception as e:
         print(f"Telegram error: {e}")
+
