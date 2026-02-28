@@ -43,6 +43,10 @@ def main():
     if passed_stocks:
         allocated_capital = capital_allocation(TOTAL_CAPITAL, "BULL")
         portfolio = build_portfolio(passed_stocks, allocated_capital)
+    
+        from storage import save_nav
+        total_nav = sum(p["value"] for p in portfolio)
+        save_nav(total_nav)
 
         message += "\n💰 DANH MỤC MINI FUND\n"
         for p in portfolio:
@@ -53,5 +57,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
