@@ -1,5 +1,5 @@
 import logging
-from data import get_universe, get_price
+from data import get_universe, load_price
 from strategy import filter_stocks
 from telegram_bot import send_message
 
@@ -13,7 +13,7 @@ def main():
     selected = []
 
     # Lấy dữ liệu VNINDEX để tính RS
-    index_df = get_price("VNINDEX", is_index=True)
+    index_df = load_price("VNINDEX", is_index=True)
 
     if index_df is None:
         print("Không lấy được VNINDEX, bỏ qua RS")
@@ -22,8 +22,7 @@ def main():
         use_rs = True
 
     for symbol in universe:
-        stock_df = get_price(symbol)
-
+        stock_df = load_price(symbol)
         if stock_df is None or len(stock_df) < 200:
             continue
 
@@ -63,4 +62,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
