@@ -54,9 +54,16 @@ def main():
 
     send_message(message)
     print(message)
+ 
+    from core.report import plot_equity_curve
+    from infra.telegram_bot import send_photo
+
+    plot_equity_curve()
+    send_photo("equity.png")
 
 if __name__ == "__main__":
     main()
+
 
 
 
