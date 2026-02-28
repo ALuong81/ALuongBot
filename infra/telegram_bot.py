@@ -1,15 +1,7 @@
 import requests
-import os
+from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-
-def send_message(text):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-
-    payload = {
-        "chat_id": CHAT_ID,
-        "text": text
-    }
-
-    requests.post(url, data=payload)
+def send_photo(path):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendPhoto"
+    with open(path, "rb") as f:
+        requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID}, files={"photo": f})
